@@ -10,46 +10,10 @@ import retrofit2.Response
 
 class MovieRepository(private var movieApiService: MovieApiService) {
 
-    val movieList = MutableLiveData<List<Movie>>()
 
-    fun getAllMovies(): MutableLiveData<List<Movie>> {
-        return movieList
+    suspend fun getMovie(title: String, apikey: String): Response<Search> {
+        return movieApiService.getMovie(title, apikey)
     }
 
 
-    fun getMovie(i: String, token: String) {
-        movieApiService.getAllMovies(i, token).enqueue(object : Callback<Search> {
-            override fun onResponse(call: Call<Search>, response: Response<Search>) {
-                response.body()?.resultSearch?.let { list ->
-                    movieList.value = list
-                }
-            }
-
-            override fun onFailure(call: Call<Search>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
-        })
-    }
-
-    fun getSearchMovie(query: String) {
-        movieApiService.getSearchMovie(query).enqueue(object : Callback<Search> {
-
-            override fun onResponse(call: Call<Search>, response: Response<Search>) {
-                val allSearch = response.body()?.resultSearch
-                allSearch?.let {
-                    for (movie in allSearch) {
-                        if (movie.title != null && movie.poster != null) {
-                            movieList.value = response.body()
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<Search>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
-        })
-    }
 }

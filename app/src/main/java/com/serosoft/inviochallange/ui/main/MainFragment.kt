@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -32,19 +33,17 @@ class MainFragment : Fragment() {
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                viewModel.movieList.observe(viewLifecycleOwner){
-                    if (it.isNullOrEmpty()){
+            override fun onQueryTextSubmit(query: String): Boolean {
+                viewModel.getMovie(query,"API_KEY")
+                viewModel.movieResponse.observe(viewLifecycleOwner){
+                    if (it.isSuccessful){
 
+                        Toast.makeText(context,"Başarılı",Toast.LENGTH_LONG).show()
                     }else{
-                        val adapter=MovieAdapter(it){
-                            val action = MainFragmentDirections.mainToDetail()
-                            findNavController().navigate(action)
-                        }
-                        binding.movieAdapter = adapter
+                        Toast.makeText(context,"Başarısız",Toast.LENGTH_LONG).show()
                     }
-
                 }
+
                 return false
             }
 
